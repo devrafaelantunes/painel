@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-br"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Painel">
+<meta name="theme-color" content="#0b1220">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Painel</title>
+<style>
+html,body{height:100%;margin:0;background:#0b1220;color:#e8eef7;
+  font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  display:flex;align-items:center;justify-content:center;text-align:center}
+.box{padding:28px;max-width:420px}
+h1{font-size:19px;margin:0 0 10px;font-weight:650}
+p{color:#93a4bd;font-size:14px;margin:0 0 18px}
+a{display:inline-block;background:#48b0ff;color:#04121f;text-decoration:none;
+  padding:11px 22px;border-radius:10px;font-weight:650}
+.sp{width:26px;height:26px;margin:0 auto 18px;border:3px solid #24334d;
+  border-top-color:#48b0ff;border-radius:50%;animation:s .8s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+</style></head>
+<body><div class="box">
+  <div class="sp" id="sp"></div>
+  <h1 id="t">abrindo o painel...</h1>
+  <p id="m">buscando o endereco atual</p>
+  <a id="go" href="#" style="display:none">abrir mesmo assim</a>
+</div>
+<script>
+/* This page never changes, so the phone can bookmark it once. The real
+   dashboard lives behind a tunnel whose hostname rotates on every restart,
+   so the current one is published in url.json and read fresh each time. */
+fetch('url.json?t=' + Date.now(), {cache: 'no-store'})
+  .then(r => r.json())
+  .then(d => {
+    if(!d.url) throw new Error('vazio');
+    document.getElementById('go').href = d.url;
+    document.getElementById('go').style.display = 'inline-block';
+    location.replace(d.url);
+  })
+  .catch(() => {
+    document.getElementById('sp').style.display = 'none';
+    document.getElementById('t').textContent = 'painel offline';
+    document.getElementById('m').textContent =
+      'o mac esta desligado, dormindo ou sem rede. tenta de novo daqui a pouco.';
+  });
+</script></body></html>
